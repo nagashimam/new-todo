@@ -1,0 +1,39 @@
+<h1>Todo list</h1>
+<ul>
+  <li *ngFor="let todo of todos; index as idx">
+    <div class="todo_title-edit" *ngIf="todo.isBeingEdited">
+      <label
+        [id]="'todo-edit-label-' + idx"
+        [for]="'todo-edit-' + idx"
+        class="todo_title-edit-label"
+        >todoのタイトルを編集してください。元のタイトル:{{ todo.title }}</label
+      >
+      <input type="text" [id]="'todo-edit-' + idx" [value]="todo.title" />
+      <div>
+        <button (click)="finishEditing(idx)">保存</button>
+        <button (click)="cancelEditing(idx)">キャンセル</button>
+      </div>
+    </div>
+    <div class="todo_edit-form" *ngIf="!todo.isBeingEdited">
+      <div>
+        <input
+          [id]="'checkbox-' + idx"
+          type="checkbox"
+          (click)="markAsDone(todo.id!)"
+        />
+        <label [for]="'checkbox-' + idx">{{ todo.title }}</label>
+      </div>
+      <button class="todo_edit" id="todo-edit" (click)="startEditing(idx)">
+        <label for="todo-edit">編集する</label>
+        <img src="../../assets/pencil.svg" alt="" />
+      </button>
+    </div>
+  </li>
+</ul>
+<form class="todo_form">
+  <label for="new-todo">新しいtodo</label>
+  <input id="new-todo" type="text" class="todo_input" #todoInput />
+  <button type="submit" class="todo_button" (click)="addTodo()">
+    新しいtodoを追加
+  </button>
+</form>

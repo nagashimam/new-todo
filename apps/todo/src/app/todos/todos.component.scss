@@ -1,0 +1,25 @@
+.todo_title-edit,
+.todo_form {
+  display: flex;
+  flex-direction: column;
+}
+
+.todo_input {
+  max-width: 500px;
+}
+
+.todo_button {
+  margin-top: 16px;
+  max-width: 500px;
+}
+
+.todo_edit-form,
+.todo_edit {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.todo_edit {
+  margin-left: 16px;
+}

@@ -9,7 +9,11 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app/app.module';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const cors = {
+    origin: 'http://localhost:4200',
+    method: 'GET,POST,DELETE,PATCH',
+  };
+  const app = await NestFactory.create(AppModule, { cors });
   const globalPrefix = 'api';
   app.setGlobalPrefix(globalPrefix);
   const port = process.env.PORT || 3333;

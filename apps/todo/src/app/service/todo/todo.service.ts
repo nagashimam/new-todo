@@ -1,44 +1,54 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, firstValueFrom, Observable } from 'rxjs';
-import { Todo } from '../../model/todo.model';
+import { environment } from '../../../environments/environment';
+import { BehaviorSubject } from 'rxjs';
+import {
+  CreateTodoDto,
+  ReadTodoDto,
+  UpdateTodoDto,
+} from '@todo/api-interfaces';
 
 @Injectable({
   providedIn: 'root',
 })
 export class TodoService {
-  readonly todoKey = 'todo';
-  private todos$ = new BehaviorSubject<Partial<Todo>[]>([]);
+  private todoSubject = new BehaviorSubject<ReadTodoDto[]>([]);
 
-  fetchTodo(): Observable<Partial<Todo>[]> {
-    const currentRawTodos = localStorage.getItem(this.todoKey);
-    const currentTodos: Partial<Todo>[] = JSON.parse(currentRawTodos || '[]');
-    this.todos$.next(currentTodos);
-    return this.todos$;
+  constructor(private httpClient: HttpClient) {}
+
+  get todos$() {
+    return this.todoSubject.asObservable();
   }
 
-  async addTodo(newTodo: Partial<Todo>): Promise<void> {
-    const currentTodos = await firstValueFrom(this.fetchTodo());
-    currentTodos.push(newTodo);
-    localStorage.setItem(this.todoKey, JSON.stringify(currentTodos));
-    this.todos$.next(currentTodos);
+  findAll() {
+    this.httpClient
+      .get<ReadTodoDto[]>(`${environment.endpoint}/todo`)
+      .subscribe((todos) => {
+        this.todoSubject.next(todos);
+      });
   }
 
-  async markAsDone(id: string): Promise<void> {
-    const currentTodos = await firstValueFrom(this.fetchTodo());
-    const newTodos = currentTodos.filter((todo) => todo.id !== id);
-    localStorage.setItem(this.todoKey, JSON.stringify(newTodos));
-    this.todos$.next(newTodos);
+  create(createTodoDto: CreateTodoDto) {
+    this.httpClient
+      .post<ReadTodoDto[]>(`${environment.endpoint}/todo`, createTodoDto)
+      .subscribe((todos) => {
+        this.todoSubject.next(todos);
+      });
   }
 
-  async editTodo(newTodo: Partial<Todo>): Promise<void> {
-    const currentTodos = await firstValueFrom(this.fetchTodo());
-    const newTodos = currentTodos.map((todo) => {
-      if (todo.id === newTodo.id) {
-        todo.title = newTodo.title;
-      }
-      return todo;
-    });
-    localStorage.setItem(this.todoKey, JSON.stringify(newTodos));
-    this.todos$.next(newTodos);
+  delete(id: string) {
+    this.httpClient
+      .delete<ReadTodoDto[]>(`${environment.endpoint}/todo/${id}`)
+      .subscribe((todos) => {
+        this.todoSubject.next(todos);
+      });
+  }
+
+  update(id: string, updateTodoDto: UpdateTodoDto) {
+    this.httpClient
+      .patch<ReadTodoDto[]>(`${environment.endpoint}/todo/${id}`, updateTodoDto)
+      .subscribe((todos) => {
+        this.todoSubject.next(todos);
+      });
   }
 }

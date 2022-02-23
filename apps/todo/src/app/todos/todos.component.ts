@@ -9,7 +9,7 @@ import { Todo } from '../model/todo.model';
 import { TodoService } from '../service/todo/todo.service';
 
 @Component({
-  selector: 'app-todos',
+  selector: 'todo-todos',
   templateUrl: './todos.component.html',
   styleUrls: ['./todos.component.scss'],
 })
@@ -17,7 +17,7 @@ export class TodosComponent implements OnInit {
   @ViewChild('todoInput')
   todoInput: ElementRef | undefined;
 
-  todos: Partial<Todo>[] = [];
+  todos: Todo[] = [];
 
   constructor(
     private todoService: TodoService,
@@ -25,25 +25,24 @@ export class TodosComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.todoService.fetchTodo().subscribe((todos) => {
-      this.todos = todos;
+    this.todoService.todos$.subscribe((todos) => {
+      this.todos = todos.map((todo) => ({
+        ...todo,
+        isBeingEdited: false,
+      }));
     });
+    this.todoService.findAll();
   }
 
   async addTodo(): Promise<void> {
-    const newTodoTitle = this.todoInput?.nativeElement.value;
-    if (newTodoTitle) {
-      const newTodo: Todo = {
-        id: new Date().getMilliseconds().toLocaleString(),
-        title: newTodoTitle,
-        isBeingEdited: false,
-      };
-      await this.todoService.addTodo(newTodo);
+    const title = this.todoInput?.nativeElement.value;
+    if (title) {
+      await this.todoService.create({ title });
     }
   }
 
   async markAsDone(id: string): Promise<void> {
-    await this.todoService.markAsDone(id);
+    this.todoService.delete(id);
   }
 
   startEditing(index: number): void {
@@ -64,13 +63,8 @@ export class TodosComponent implements OnInit {
       `#todo-edit-${index}`
     );
     if (edit) {
-      const newTitle = edit.value;
-      const newTodo: Partial<Todo> = {
-        ...this.todos[index],
-        title: newTitle,
-        isBeingEdited: false,
-      };
-      await this.todoService.editTodo(newTodo);
+      const title = edit.value;
+      await this.todoService.update(this.todos[index].id, { title });
     }
   }
 }

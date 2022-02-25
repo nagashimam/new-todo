@@ -5,7 +5,7 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
-import { Todo } from '../model/todo.model';
+import { ClientTodo } from '../model/todo.model';
 import { TodoService } from '../service/todo/todo.service';
 
 @Component({
@@ -17,7 +17,7 @@ export class TodosComponent implements OnInit {
   @ViewChild('todoInput')
   todoInput: ElementRef | undefined;
 
-  todos: Todo[] = [];
+  todos: ClientTodo[] = [];
 
   constructor(
     private todoService: TodoService,
@@ -31,7 +31,7 @@ export class TodosComponent implements OnInit {
         isBeingEdited: false,
       }));
     });
-    this.todoService.findAll();
+    this.todoService.findMany();
   }
 
   async addTodo(): Promise<void> {
@@ -41,8 +41,8 @@ export class TodosComponent implements OnInit {
     }
   }
 
-  async markAsDone(id: string): Promise<void> {
-    this.todoService.delete(id);
+  async markAsDone(id: number): Promise<void> {
+    this.todoService.delete(+id);
   }
 
   startEditing(index: number): void {

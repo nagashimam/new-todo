@@ -1,46 +1,35 @@
 import { Injectable } from '@nestjs/common';
-import {
-  UpdateTodoDto,
-  CreateTodoDto,
-  ReadTodoDto,
-} from '@todo/api-interfaces';
-
-const todos: ReadTodoDto[] = [
-  { id: 'one', title: '確定申告' },
-  { id: 'two', title: '温泉予約' },
-];
+import { PrismaService } from '../prisma/prisma.service';
+import { Todo, Prisma, PrismaPromise } from '@prisma/client';
 
 @Injectable()
 export class TodoService {
-  create(createTodoDto: CreateTodoDto): Promise<ReadTodoDto[]> {
-    const id = new Date().getTime().toString();
-    todos.push({ id, title: createTodoDto.title });
-    return Promise.resolve(todos);
+  constructor(private prisma: PrismaService) {}
+
+  create(data: Prisma.TodoCreateInput): Promise<Todo> {
+    return this.prisma.todo.create({ data });
   }
 
-  findAll(): Promise<ReadTodoDto[]> {
-    return Promise.resolve(todos);
+  findMany(params: {
+    where?: Prisma.TodoWhereInput;
+    orderBy?: Prisma.TodoOrderByWithRelationInput;
+  }): PrismaPromise<Todo[]> {
+    const { where, orderBy } = params;
+    return this.prisma.todo.findMany({ where, orderBy });
   }
 
-  findOne(id: string): Promise<ReadTodoDto> {
-    return Promise.resolve(todos.find((todo) => todo.id === id));
+  findOne(where: Prisma.TodoWhereUniqueInput): PrismaPromise<Todo> {
+    return this.prisma.todo.findUnique({ where });
   }
 
-  update(id: string, updateTodoDto: UpdateTodoDto): Promise<ReadTodoDto[]> {
-    todos.forEach((todo) => {
-      if (todo.id === id) {
-        todo.title = updateTodoDto.title;
-      }
-    });
-    return Promise.resolve(todos);
+  update(
+    where: Prisma.TodoWhereUniqueInput,
+    data: Prisma.TodoUpdateInput
+  ): Promise<Todo> {
+    return this.prisma.todo.update({ where, data });
   }
 
-  remove(id: string): Promise<ReadTodoDto[]> {
-    todos.forEach((todo, index) => {
-      if (todo.id === id) {
-        todos.splice(index, 1);
-      }
-    });
-    return Promise.resolve(todos);
+  remove(where: Prisma.TodoWhereUniqueInput): Promise<Todo> {
+    return this.prisma.todo.delete({ where });
   }
 }

@@ -7,35 +7,38 @@ import {
   Param,
   Delete,
 } from '@nestjs/common';
-import { CreateTodoDto, UpdateTodoDto } from '@todo/api-interfaces';
 import { TodoService } from './todo.service';
+import { Prisma } from '@prisma/client';
 
 @Controller('todo')
 export class TodoController {
   constructor(private readonly todoService: TodoService) {}
 
   @Post()
-  create(@Body() createTodoDto: CreateTodoDto) {
-    return this.todoService.create(createTodoDto);
+  create(@Body() data: Prisma.TodoCreateInput) {
+    return this.todoService.create(data);
   }
 
   @Get()
-  findAll() {
-    return this.todoService.findAll();
+  findMany() {
+    return this.todoService.findMany({ orderBy: { id: 'asc' } });
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.todoService.findOne(id);
+    const where = { id: +id };
+    return this.todoService.findOne(where);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateTodoDto: UpdateTodoDto) {
-    return this.todoService.update(id, updateTodoDto);
+  update(@Param('id') id: string, @Body() data: Prisma.TodoUpdateInput) {
+    const where = { id: +id };
+    return this.todoService.update(where, data);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.todoService.remove(id);
+    const where = { id: +id };
+    return this.todoService.remove(where);
   }
 }

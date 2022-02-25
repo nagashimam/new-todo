@@ -2,17 +2,13 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { BehaviorSubject } from 'rxjs';
-import {
-  CreateTodoDto,
-  ReadTodoDto,
-  UpdateTodoDto,
-} from '@todo/api-interfaces';
+import { Todo, Prisma } from '@prisma/client';
 
 @Injectable({
   providedIn: 'root',
 })
 export class TodoService {
-  private todoSubject = new BehaviorSubject<ReadTodoDto[]>([]);
+  private todoSubject = new BehaviorSubject<Todo[]>([]);
 
   constructor(private httpClient: HttpClient) {}
 
@@ -20,34 +16,48 @@ export class TodoService {
     return this.todoSubject.asObservable();
   }
 
-  findAll() {
+  findMany() {
     this.httpClient
-      .get<ReadTodoDto[]>(`${environment.endpoint}/todo`)
+      .get<Todo[]>(`${environment.endpoint}/todo`)
       .subscribe((todos) => {
         this.todoSubject.next(todos);
       });
   }
 
-  create(createTodoDto: CreateTodoDto) {
+  create(data: Prisma.TodoCreateInput) {
     this.httpClient
-      .post<ReadTodoDto[]>(`${environment.endpoint}/todo`, createTodoDto)
-      .subscribe((todos) => {
+      .post<Todo>(`${environment.endpoint}/todo`, data)
+      .subscribe((todo) => {
+        const todos = this.todoSubject.getValue();
+        todos.push(todo);
         this.todoSubject.next(todos);
       });
   }
 
-  delete(id: string) {
+  delete(id: number) {
     this.httpClient
-      .delete<ReadTodoDto[]>(`${environment.endpoint}/todo/${id}`)
-      .subscribe((todos) => {
+      .delete<Todo>(`${environment.endpoint}/todo/${id}`)
+      .subscribe((deletedTodo) => {
+        const todos = this.todoSubject.getValue();
+        todos.forEach((todo, index) => {
+          if (todo.id === deletedTodo.id) {
+            todos.splice(index, 1);
+          }
+        });
         this.todoSubject.next(todos);
       });
   }
 
-  update(id: string, updateTodoDto: UpdateTodoDto) {
+  update(id: number, data: Prisma.TodoUpdateInput) {
     this.httpClient
-      .patch<ReadTodoDto[]>(`${environment.endpoint}/todo/${id}`, updateTodoDto)
-      .subscribe((todos) => {
+      .patch<Todo>(`${environment.endpoint}/todo/${id}`, data)
+      .subscribe((updatedTodo) => {
+        const todos = this.todoSubject.getValue();
+        todos.forEach((todo, index) => {
+          if (todo.id === updatedTodo.id) {
+            todos[index] = updatedTodo;
+          }
+        });
         this.todoSubject.next(todos);
       });
   }

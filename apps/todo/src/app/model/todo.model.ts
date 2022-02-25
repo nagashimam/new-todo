@@ -1,5 +1,5 @@
-import { ReadTodoDto } from '@todo/api-interfaces';
+import { Todo } from '@prisma/client';
 
-export interface Todo extends ReadTodoDto {
+export interface ClientTodo extends Todo {
   isBeingEdited: boolean;
 }

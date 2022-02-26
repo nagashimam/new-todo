@@ -37,7 +37,7 @@ export class TodosComponent implements OnInit {
   async addTodo(): Promise<void> {
     const title = this.todoInput?.nativeElement.value;
     if (title) {
-      await this.todoService.create({ title });
+      await this.todoService.create({ title, user: {} });
     }
   }
 

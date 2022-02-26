@@ -5,20 +5,16 @@ import { HttpClientModule } from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { TodosComponent } from './todos/todos.component';
-import { LoginComponent } from './login/login.component';
 import { RegistrationComponent } from './registration/registration.component';
 import { NG_ENTITY_SERVICE_CONFIG } from '@datorama/akita-ng-entity-service';
 import { AkitaNgDevtools } from '@datorama/akita-ngdevtools';
 import { environment } from '../environments/environment';
+import { LoginModule } from './login/login.module';
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    TodosComponent,
-    LoginComponent,
-    RegistrationComponent,
-  ],
+  declarations: [AppComponent, TodosComponent, RegistrationComponent],
   imports: [
+    LoginModule,
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,

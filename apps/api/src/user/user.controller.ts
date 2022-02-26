@@ -1,4 +1,11 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  HttpException,
+  HttpStatus,
+  Post,
+  Put,
+} from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { HashService } from '../hash/hash.service';
 import { UserService } from './user.service';
@@ -16,8 +23,21 @@ export class UserController {
     return this.userService.create(data);
   }
 
-  @Get()
-  findOne(@Body() where: Prisma.UserWhereUniqueInput) {
-    return this.userService.findOne(where);
+  @Put()
+  async findOne(@Body() data: Omit<Prisma.UserCreateInput, 'Todo'>) {
+    const { id, password } = data;
+    const user = await this.userService.findOne({ id });
+    if (user) {
+      if (user.password === this.hashService.hash(password)) {
+        return user;
+      } else {
+        throw new HttpException(
+          'パスワードが間違っています',
+          HttpStatus.UNAUTHORIZED
+        );
+      }
+    } else {
+      throw new HttpException('IDが間違っています', HttpStatus.UNAUTHORIZED);
+    }
   }
 }

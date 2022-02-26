@@ -1,13 +1,14 @@
 <h1>Login</h1>
-<form class="login_form">
+<form class="login_form" [formGroup]="loginFormGroup" (ngSubmit)="login()">
   <div class="login_input-fields">
     <label for="user-id">ユーザーID</label>
-    <input id="user-id" type="text" />
+    <input formControlName="id" id="user-id" type="text" />
     <label for="password">パスワード</label>
-    <input id="password" type="password" />
+    <input formControlName="password" id="password" type="password" />
+    <p *ngIf="error">{{ error }}</p>
   </div>
   <div>
-    <button type="submit">ログイン</button>
+    <button type="submit" [disabled]="!loginFormGroup.valid">ログイン</button>
     <a class="login_link" href="./registration">アカウント作成</a>
   </div>
 </form>

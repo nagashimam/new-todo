@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { Todo, Prisma, PrismaPromise } from '@prisma/client';
+import { Todo, Prisma } from '@prisma/client';
 
 @Injectable()
 export class TodoService {
@@ -13,12 +13,12 @@ export class TodoService {
   findMany(params: {
     where?: Prisma.TodoWhereInput;
     orderBy?: Prisma.TodoOrderByWithRelationInput;
-  }): PrismaPromise<Todo[]> {
+  }): Promise<Todo[]> {
     const { where, orderBy } = params;
     return this.prisma.todo.findMany({ where, orderBy });
   }
 
-  findOne(where: Prisma.TodoWhereUniqueInput): PrismaPromise<Todo> {
+  findOne(where: Prisma.TodoWhereUniqueInput): Promise<Todo> {
     return this.prisma.todo.findUnique({ where });
   }
 

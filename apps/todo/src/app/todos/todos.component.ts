@@ -6,6 +6,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import { ClientTodo } from '../model/todo.model';
+import { TodoQuery } from '../service/todo/todo.query';
 import { TodoService } from '../service/todo/todo.service';
 
 @Component({
@@ -21,11 +22,12 @@ export class TodosComponent implements OnInit {
 
   constructor(
     private todoService: TodoService,
+    private todoQuery: TodoQuery,
     private cd: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
-    this.todoService.todos$.subscribe((todos) => {
+    this.todoQuery.selectAll().subscribe((todos) => {
       this.todos = todos.map((todo) => ({
         ...todo,
         isBeingEdited: false,
@@ -37,7 +39,7 @@ export class TodosComponent implements OnInit {
   async addTodo(): Promise<void> {
     const title = this.todoInput?.nativeElement.value;
     if (title) {
-      await this.todoService.create({ title, user: {} });
+      await this.todoService.create(title);
     }
   }
 
@@ -64,7 +66,8 @@ export class TodosComponent implements OnInit {
     );
     if (edit) {
       const title = edit.value;
-      await this.todoService.update(this.todos[index].id, { title });
+      const id = this.todos[index].id;
+      await this.todoService.update({ id, title });
     }
   }
 }

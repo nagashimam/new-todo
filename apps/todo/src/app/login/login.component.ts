@@ -40,7 +40,6 @@ export class LoginComponent {
       }
     });
     this.userQuery.selectError().subscribe((error) => {
-      console.log(error);
       this.error = error.error.message;
       this.loginFormGroup.reset();
     });

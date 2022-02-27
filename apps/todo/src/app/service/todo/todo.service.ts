@@ -1,64 +1,60 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
-import { BehaviorSubject } from 'rxjs';
 import { Todo, Prisma } from '@prisma/client';
+import { TodoStore } from './todo.store';
+import { UserQuery } from '../user/user.query';
 
 @Injectable({
   providedIn: 'root',
 })
 export class TodoService {
-  private todoSubject = new BehaviorSubject<Todo[]>([]);
+  private readonly endpoint = `${environment.endpoint}/todo`;
 
-  constructor(private httpClient: HttpClient) {}
-
-  get todos$() {
-    return this.todoSubject.asObservable();
-  }
+  constructor(
+    private httpClient: HttpClient,
+    private todoStore: TodoStore,
+    private userQuery: UserQuery
+  ) {}
 
   findMany() {
     this.httpClient
-      .get<Todo[]>(`${environment.endpoint}/todo`)
+      .put<Todo[]>(this.endpoint, {
+        userId: this.userQuery.getValue().id,
+      })
       .subscribe((todos) => {
-        this.todoSubject.next(todos);
+        this.todoStore.set(todos);
       });
   }
 
-  create(data: Prisma.TodoCreateInput) {
-    this.httpClient
-      .post<Todo>(`${environment.endpoint}/todo`, data)
-      .subscribe((todo) => {
-        const todos = this.todoSubject.getValue();
-        todos.push(todo);
-        this.todoSubject.next(todos);
-      });
+  create(title: string) {
+    const user: Prisma.UserCreateNestedOneWithoutTodoInput = {
+      connect: {
+        id: this.userQuery.getValue().id,
+      },
+    };
+    const data = {
+      title,
+      user,
+    };
+    this.httpClient.post<Todo>(this.endpoint, data).subscribe((todo) => {
+      this.todoStore.add(todo);
+    });
   }
 
   delete(id: number) {
     this.httpClient
-      .delete<Todo>(`${environment.endpoint}/todo/${id}`)
+      .delete<Todo>(this.endpoint, { body: { id } })
       .subscribe((deletedTodo) => {
-        const todos = this.todoSubject.getValue();
-        todos.forEach((todo, index) => {
-          if (todo.id === deletedTodo.id) {
-            todos.splice(index, 1);
-          }
-        });
-        this.todoSubject.next(todos);
+        this.todoStore.remove(deletedTodo.id);
       });
   }
 
-  update(id: number, data: Prisma.TodoUpdateInput) {
+  update(data: Prisma.TodoUpdateInput & Prisma.TodoWhereUniqueInput) {
     this.httpClient
-      .patch<Todo>(`${environment.endpoint}/todo/${id}`, data)
+      .patch<Todo>(this.endpoint, data)
       .subscribe((updatedTodo) => {
-        const todos = this.todoSubject.getValue();
-        todos.forEach((todo, index) => {
-          if (todo.id === updatedTodo.id) {
-            todos[index] = updatedTodo;
-          }
-        });
-        this.todoSubject.next(todos);
+        this.todoStore.update(updatedTodo.id, (_) => updatedTodo);
       });
   }
 }

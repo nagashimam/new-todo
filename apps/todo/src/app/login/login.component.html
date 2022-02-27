@@ -1,5 +1,5 @@
-<h1>Login</h1>
-<form class="login_form" [formGroup]="loginFormGroup" (ngSubmit)="login()">
+<h1>{{ label.title }}</h1>
+<form class="login_form" [formGroup]="loginFormGroup" (ngSubmit)="submit()">
   <div class="login_input-fields">
     <label for="user-id">ユーザーID</label>
     <input formControlName="id" id="user-id" type="text" />
@@ -8,7 +8,9 @@
     <p *ngIf="error">{{ error }}</p>
   </div>
   <div>
-    <button type="submit" [disabled]="!loginFormGroup.valid">ログイン</button>
-    <a class="login_link" href="./registration">アカウント作成</a>
+    <button type="submit" [disabled]="!loginFormGroup.valid">
+      {{ label.button }}
+    </button>
+    <a class="login_link" [href]="label.linkHref">{{ label.linkText }}</a>
   </div>
 </form>

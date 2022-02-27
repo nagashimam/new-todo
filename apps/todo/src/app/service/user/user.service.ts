@@ -26,8 +26,11 @@ export class UserService {
   }
 
   create(params: Prisma.UserCreateInput) {
-    return this.http.post<User>(this.endpoint, { params }).subscribe((user) => {
-      this.userStore.update(user);
-    });
+    const { id, password } = params;
+    return this.http
+      .post<User>(this.endpoint, { id, password })
+      .subscribe((user) => {
+        this.userStore.update(user);
+      });
   }
 }

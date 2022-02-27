@@ -12,12 +12,28 @@ import { UserService } from '../service/user/user.service';
 })
 export class LoginComponent {
   error: string | undefined = undefined;
+  label: { title: string; button: string; linkText: string; linkHref: string };
+
   constructor(
     private userQuery: UserQuery,
     private formBuilder: FormBuilder,
     private userService: UserService,
     private router: Router
   ) {
+    this.label = this.router.url.includes('login')
+      ? {
+          title: 'Login',
+          button: 'ログイン',
+          linkText: 'アカウント登録',
+          linkHref: './registration',
+        }
+      : {
+          title: 'Registration',
+          button: '登録',
+          linkText: 'ログイン',
+          linkHref: './login',
+        };
+
     this.userQuery.user$.pipe(skip(1)).subscribe((user) => {
       if (user.id && user.password) {
         this.router.navigate(['/todos']);
@@ -41,9 +57,13 @@ export class LoginComponent {
     ],
   });
 
-  login() {
+  submit() {
     const id = this.loginFormGroup.controls['id'].value;
     const password = this.loginFormGroup.controls['password'].value;
-    this.userService.findOne({ id, password });
+    if (this.label.title === 'Login') {
+      this.userService.findOne({ id, password });
+    } else {
+      this.userService.create({ id, password });
+    }
   }
 }

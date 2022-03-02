@@ -21,8 +21,7 @@ import { AuthModule } from '@auth0/auth0-angular';
     HttpClientModule,
     environment.production ? [] : AkitaNgDevtools.forRoot(),
     AuthModule.forRoot({
-      domain: environment.authDomain,
-      clientId: environment.authClientId,
+      ...environment.auth,
     }),
   ],
   providers: [

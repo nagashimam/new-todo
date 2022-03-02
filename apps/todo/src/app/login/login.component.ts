@@ -59,11 +59,11 @@ export class LoginComponent {
   });
 
   loginWithRedirect() {
-    this.auth.loginWithRedirect({
-      appState: {
-        target: '/todos',
-      },
-    });
+    this.auth.loginWithRedirect();
+  }
+
+  logoutWithRedirect() {
+    this.auth.logout();
   }
 
   submit() {

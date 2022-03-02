@@ -5,8 +5,11 @@
 export const environment = {
   production: false,
   endpoint: 'http://localhost:3333/api',
-  authDomain: 'dev-mew3twyj.us.auth0.com',
-  authClientId: 'myW3CVDMVM0ShEUOAG9FY1NXLe82BZu3',
+  auth: {
+    domain: 'dev-mew3twyj.us.auth0.com',
+    clientId: 'myW3CVDMVM0ShEUOAG9FY1NXLe82BZu3',
+    redirectUri: 'http://localhost:4200/todos',
+  },
 };
 
 /*

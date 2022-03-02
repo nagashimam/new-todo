@@ -5,10 +5,9 @@ import { LoginComponent } from './login/login.component';
 import { TodosComponent } from './todos/todos.component';
 
 const routes: Routes = [
-  { path: 'login', component: LoginComponent },
-  { path: 'todos', component: TodosComponent, canActivate: [AuthGuard] },
-  { path: '', component: TodosComponent },
-  { path: '**', redirectTo: '/todos', pathMatch: 'full' },
+  { path: './login', component: LoginComponent },
+  { path: './todos', component: TodosComponent, canActivate: [AuthGuard] },
+  { path: '**', redirectTo: './login', pathMatch: 'full' },
 ];
 
 @NgModule({

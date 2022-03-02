@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { AuthService } from '@auth0/auth0-angular';
 import { skip } from 'rxjs';
 import { UserQuery } from '../service/user/user.query';
 import { UserService } from '../service/user/user.service';
@@ -18,7 +19,8 @@ export class LoginComponent {
     private userQuery: UserQuery,
     private formBuilder: FormBuilder,
     private userService: UserService,
-    private router: Router
+    private router: Router,
+    public auth: AuthService
   ) {
     this.label = this.router.url.includes('login')
       ? {
@@ -55,6 +57,14 @@ export class LoginComponent {
       ]),
     ],
   });
+
+  loginWithRedirect() {
+    this.auth.loginWithRedirect({
+      appState: {
+        target: '/todos',
+      },
+    });
+  }
 
   submit() {
     const id = this.loginFormGroup.controls['id'].value;

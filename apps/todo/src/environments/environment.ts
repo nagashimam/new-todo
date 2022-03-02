@@ -5,6 +5,8 @@
 export const environment = {
   production: false,
   endpoint: 'http://localhost:3333/api',
+  authDomain: 'dev-mew3twyj.us.auth0.com',
+  authClientId: 'myW3CVDMVM0ShEUOAG9FY1NXLe82BZu3',
 };
 
 /*

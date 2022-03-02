@@ -1,0 +1,31 @@
+import { Injectable, NestMiddleware } from '@nestjs/common';
+import * as jwt from 'express-jwt';
+import { expressJwtSecret } from 'jwks-rsa';
+import { Request, Response } from 'express';
+import * as dotenv from 'dotenv';
+dotenv.config();
+
+@Injectable()
+export class AuthMiddleware implements NestMiddleware {
+  use(req: Request, res: Response, next: () => void) {
+    jwt({
+      secret: expressJwtSecret({
+        cache: true,
+        rateLimit: true,
+        jwksRequestsPerMinute: 5,
+        jwksUri: `https://${process.env.AUTH0_DOMAIN}/.well-known/jwks.json`,
+      }),
+      issuer: `https://${process.env.AUTH0_DOMAIN}/`,
+      algorithms: ['RS256'],
+    })(req, res, (err) => {
+      if (err) {
+        const status = err.status || 500;
+        const message = '認証に失敗しました';
+        return res.status(status).send({
+          message,
+        });
+      }
+      next();
+    });
+  }
+}

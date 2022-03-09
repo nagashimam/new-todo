@@ -9,6 +9,8 @@ export const environment = {
     domain: 'dev-mew3twyj.us.auth0.com',
     clientId: 'myW3CVDMVM0ShEUOAG9FY1NXLe82BZu3',
     redirectUri: 'http://localhost:4200/todos',
+    audience: 'http://localhost:3333/api',
+    scope: 'user',
   },
 };
 

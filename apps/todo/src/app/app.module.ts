@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -12,6 +12,7 @@ import { environment } from '../environments/environment';
 import { LoginModule } from './login/login.module';
 import { AuthModule } from '@auth0/auth0-angular';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { AuthInterceptor } from './service/auth/auth.interceptor';
 
 @NgModule({
   declarations: [AppComponent, TodosComponent, RegistrationComponent],
@@ -30,6 +31,11 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     {
       provide: NG_ENTITY_SERVICE_CONFIG,
       useValue: { baseUrl: environment.endpoint },
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true,
     },
   ],
   bootstrap: [AppComponent],

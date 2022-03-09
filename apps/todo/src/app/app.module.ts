@@ -11,6 +11,7 @@ import { AkitaNgDevtools } from '@datorama/akita-ngdevtools';
 import { environment } from '../environments/environment';
 import { LoginModule } from './login/login.module';
 import { AuthModule } from '@auth0/auth0-angular';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
   declarations: [AppComponent, TodosComponent, RegistrationComponent],
@@ -23,6 +24,7 @@ import { AuthModule } from '@auth0/auth0-angular';
     AuthModule.forRoot({
       ...environment.auth,
     }),
+    BrowserAnimationsModule,
   ],
   providers: [
     {

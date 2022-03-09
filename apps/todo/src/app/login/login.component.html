@@ -1,2 +1,11 @@
-<h1>ログイン</h1>
-<button type="button" (click)="loginWithRedirect()">ログイン</button>
+<ng-container *ngIf="loading; else login">
+  <mat-spinner
+    class="login_spinner"
+    aria-label="ログイン状態を読み込み中"
+    *ngIf="loading"
+  ></mat-spinner>
+</ng-container>
+<ng-template #login>
+  <h1>ログイン</h1>
+  <button type="button" (click)="loginWithRedirect()">ログイン</button>
+</ng-template>

@@ -8,3 +8,16 @@
 .login_link {
   padding-left: 16px;
 }
+
+.login_spinner-container {
+  display: flex;
+  height: 100%;
+}
+
+.login_spinner {
+  position: absolute;
+  // スピナーの中心が画面中央に来るよう半径分ずらす
+  $radius: 50px;
+  top: calc(50% - $radius);
+  left: calc(50% - $radius);
+}

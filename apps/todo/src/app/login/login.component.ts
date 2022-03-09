@@ -8,8 +8,10 @@ import { AuthService } from '@auth0/auth0-angular';
   styleUrls: ['./login.component.scss'],
 })
 export class LoginComponent {
+  loading = true;
   constructor(public auth: AuthService, private router: Router) {
     this.auth.isAuthenticated$.subscribe((isAuthenticated) => {
+      this.loading = false;
       if (isAuthenticated) {
         this.router.navigateByUrl('./todos');
       }

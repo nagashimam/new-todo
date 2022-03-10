@@ -14,7 +14,8 @@
     "mysql:start": "docker compose --env-file=\".env\" up",
     "mysql:stop": "npm run mysql:dump:create && docker compose --env-file=\".env\" down",
     "mysql:dump:create": "docker exec mysql_container sh -c 'exec mysqldump --all-databases -uroot -p\"$MYSQL_ROOT_PASSWORD\"' > prisma/dump/all-databases.sql",
-    "mysql:dump:restore": "docker exec -i mysql_container sh -c 'exec mysql -uroot -p\"$MYSQL_ROOT_PASSWORD\"' < prisma/dump/all-databases.sql"
+    "mysql:dump:restore": "docker exec -i mysql_container sh -c 'exec mysql -uroot -p\"$MYSQL_ROOT_PASSWORD\"' < prisma/dump/all-databases.sql",
+    "prod:setup": "sh scripts/setup.sh"
   },
   "private": true,
   "dependencies": {

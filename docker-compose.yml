@@ -6,6 +6,7 @@ services:
     image: mysql
     restart: always
     container_name: mysql_container
+    hostname: mysql_container
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
     ports:

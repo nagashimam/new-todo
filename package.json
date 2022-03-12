@@ -7,7 +7,7 @@
     "postinstall": "node ./decorate-angular-cli.js && ngcc --properties es2015 browser module main",
     "start": "run-p start:todo start:mysql",
     "start:todo": "nx serve todo",
-    "start:api": "nx serve api",
+    "start:api": "docker run -it -p 3333:3333 --net=todo_default $(docker build -q .)",
     "start:mysql": "npm run mysql:start",
     "build": "nx build",
     "test": "nx test",

@@ -1,3 +1,8 @@
+# サーバーに使う自宅のラズパイがcypressのシステム要件を満たさない
+# apiには関係ないので、cypress以外をインストールする
+packs_without_cypress=`cat package.json | grep -v "cypress"`
+echo $packs_without_cypress > package.json
+
 # 環境変数読み込みに必要なのでグローバルインストール
 npm i dotenv -g
 

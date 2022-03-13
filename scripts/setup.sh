@@ -1,6 +1,12 @@
 # 環境変数読み込みに必要なのでグローバルインストール
 npm i dotenv -g
 
+# GPGキーを更新
+sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 04EE7237B7D453EC 648ACFD622F3D138
+echo 'deb http://httpredir.debian.org/debian buster-backports main contrib non-free' | sudo tee -a /etc/apt/sources.list.d/debian-backports.list
+sudo apt-get update && sudo apt-get upgrade -y
+sudo apt-get install libseccomp2 -t buster-backports
+
 # .envファイルを作成する
 read -p "DATABASE_URL: " DATABASE_URL
 read -p "AUTH0_DOMAIN: " AUTH0_DOMAIN

@@ -10,7 +10,7 @@ import { AuthService } from '@auth0/auth0-angular';
 export class LoginComponent {
   loading = true;
   constructor(public auth: AuthService, private router: Router) {
-    this.auth.isAuthenticated$.subscribe((isAuthenticated) => {
+    this.auth.isAuthenticated$.subscribe(async (isAuthenticated) => {
       this.loading = false;
       if (isAuthenticated) {
         this.router.navigateByUrl('./todos');

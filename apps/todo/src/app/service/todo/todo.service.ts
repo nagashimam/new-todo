@@ -3,7 +3,8 @@ import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { Todo, Prisma } from '@prisma/client';
 import { TodoStore } from './todo.store';
-import { UserQuery } from '../user/user.query';
+import { AuthService } from '@auth0/auth0-angular';
+import { firstValueFrom } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -14,32 +15,36 @@ export class TodoService {
   constructor(
     private httpClient: HttpClient,
     private todoStore: TodoStore,
-    private userQuery: UserQuery
+    private authService: AuthService
   ) {}
 
-  findMany() {
-    this.httpClient
-      .put<Todo[]>(this.endpoint, {
-        userId: this.userQuery.getValue().id,
-      })
-      .subscribe((todos) => {
-        this.todoStore.set(todos);
-      });
+  async findMany() {
+    const user = await firstValueFrom(this.authService.user$);
+    if (user) {
+      const where: Prisma.TodoWhereInput = {
+        userId: user.email,
+      };
+      this.httpClient
+        .put<Todo[]>(this.endpoint, {
+          where,
+        })
+        .subscribe((todos) => {
+          this.todoStore.set(todos);
+        });
+    }
   }
 
-  create(title: string) {
-    const user: Prisma.UserCreateNestedOneWithoutTodoInput = {
-      connect: {
-        id: this.userQuery.getValue().id,
-      },
-    };
-    const data = {
-      title,
-      user,
-    };
-    this.httpClient.post<Todo>(this.endpoint, data).subscribe((todo) => {
-      this.todoStore.add(todo);
-    });
+  async create(title: string) {
+    const user = await firstValueFrom(this.authService.user$);
+    if (user && user.email) {
+      const data: Prisma.TodoCreateInput = {
+        title,
+        userId: user.email,
+      };
+      this.httpClient.post<Todo>(this.endpoint, data).subscribe((todo) => {
+        this.todoStore.add(todo);
+      });
+    }
   }
 
   delete(id: number) {

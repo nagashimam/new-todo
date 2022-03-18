@@ -5,17 +5,17 @@
   "scripts": {
     "ng": "nx",
     "postinstall": "node ./decorate-angular-cli.js && ngcc --properties es2015 browser module main",
-    "start": "run-p start:todo start:mysql",
+    "start": "run-p start:*",
     "start:todo": "nx serve todo",
-    "start:api": "dotenv -e .env -- bash -c 'docker run -it -p 3333:3333 $(docker build -q --build-arg DATABASE_URL=$DATABASE_URL .)'",
-    "start:mysql": "npm run mysql:start",
+    "start:api": "nx serve api",
     "build": "nx build",
     "test": "nx test",
-    "mysql:start": "docker compose --env-file=\".env\" up",
-    "mysql:stop": "npm run mysql:dump:create && docker compose --env-file=\".env\" down",
-    "mysql:dump:create": "docker exec mysql_container sh -c 'exec mysqldump --all-databases -uroot -p\"$MYSQL_ROOT_PASSWORD\"' > prisma/dump/all-databases.sql",
-    "mysql:dump:restore": "docker exec -i mysql_container sh -c 'exec mysql -uroot -p\"$MYSQL_ROOT_PASSWORD\"' < prisma/dump/all-databases.sql",
-    "prod:setup": "sh scripts/setup.sh"
+    "prod:setup": "sh scripts/setup.sh",
+    "dev:db": "SCHEMA_DIR=prisma/dev npm run db",
+    "dev:db:update": "SCHEMA_DIR=prisma/dev run-s db:update:*",
+    "db:run": "sqlite3 $SCHAME_DIR/data.db",
+    "db:update:migrate": "npx prisma migrate dev --schema $SCHEMA_DIR/schema.prisma --name init",
+    "db:update:generate": "npx prisma generate --schema $SCHEMA_DIR/schema.prisma"
   },
   "private": true,
   "dependencies": {
